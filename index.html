@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #89c15e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: #89c15e;
+            padding: 15px 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 500px;
+            margin-bottom: 50px;
+            border: 3px solid white;
+        }
+
+        .title {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .score-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .score-box {
+            background-color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            width: 80px;
+            text-align: center;
+        }
+
+        .score-label {
+            font-size: 10px;
+            color: #444;
+            text-transform: uppercase;
+        }
+
+        .score {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 500px;
+            position: relative;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            height: 280px;
+            width: 280px;
+        }
+
+        .option {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: absolute;
+            border: 8px solid;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .option:hover {
+            transform: scale(1.1);
+        }
+
+        /* Positioning of options */
+        .option.rock {
+            border-color: #0074B6;
+            top: 0;
+            left: 0;
+        }
+
+        .option.paper {
+            border-color: #FFA943;
+            top: 0;
+            right: 0;
+        }
+
+        .option.scissors {
+            border-color: #BD00FF;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 150px;
+        }
+
+        .option.scissors:hover {
+            transform: translateX(-50%) scale(1.1);
+        }
+
+        .option-icon {
+            font-size: 50px;
+        }
+
+        /* Triangle background */
+        .triangle {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            z-index: -1;
+        }
+
+        .result-container {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .player-pick, .computer-pick {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pick-label {
+            color: white;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .pick-circle {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 8px solid;
+            position: relative;
+        }
+
+        .pick-circle.rock {
+            border-color: #0074B6;
+        }
+
+        .pick-circle.paper {
+            border-color: #FFA943;
+        }
+
+        .pick-circle.scissors {
+            border-color: #BD00FF;
+        }
+
+        .pick-circle .option-icon {
+            font-size: 60px;
+        }
+
+        .result {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .result-message {
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .next-btn, .play-again-btn {
+            background-color: white;
+            color: #333;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+
+        }
+
+        #next-btn{
+            position: absolute;
+            top: 510px;
+            left:950px;
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .next-btn:hover, .play-again-btn:hover {
+            background-color: #eaeaea;
+        }
+
+        .rules-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .rules-container {
+            ul {
+                list-style: none; /* remove default bullets */
+                padding-left: 20px;
+            }
+
+            ul li {
+                position: relative;
+                padding-left: 25px;
+                color: white;
+                margin-bottom: 10px;
+            }
+
+            ul li::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 7px;
+                width: 10px;
+                height: 10px;
+                background-color: yellow;
+                border-radius: 2px; /* optional: slight rounding */
+            }
+
+            position: fixed;
+            top: 70%;
+            left: 88%;
+            transform: translate(-50%, -50%);
+            background-color: green;
+            padding: 30px;
+            border-radius: 8px;
+            width: 400px;
+            z-index: 999;
+            display: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 3px solid white;
+        }
+
+        .rules-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .rules-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+
+                .close-btn {
+        position: absolute;
+        top: 4px;
+        right: 1px;
+        background: rgba(255, 255, 255, 0.8);
+        border: 2px solid #ff0000;
+        color: #ff0000;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        font-size: 20px;
+        cursor: pointer;
+        }
+                    
+        
+
+        .close-btn:hover {
+            color: red;
+            border-color: red;
+            transform: scale(1.1);
+        }
+
+       
+       
+        .rules-content {
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .rules-content ul {
+            padding-left: 20px;
+        }
+
+        .rules-content li {
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .celebration-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #70B370;
+        }
+
+        .trophy {
+            font-size: 100px;
+            margin-bottom: 20px;
+        }
+
+        .celebration-message {
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .pulse-rings {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+        }
+
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border-style: solid;
+            animation-timing-function: ease-out;
+            animation-iteration-count: infinite;
+        }
+
+        .ring-1 {
+            width: 150px;
+            height: 150px;
+            border-width: 12px;
+            border-color: rgba(0, 255, 100, 0.7);
+            animation: pulse-wave 2s infinite;
+            box-shadow: 0 0 20px rgba(0, 255, 100, 0.3);
+        }
+
+        .ring-2 {
+            width: 200px;
+            height: 200px;
+            border-width: 15px;
+            border-color: rgba(0, 220, 80, 0.5);
+            animation: pulse-wave 2s 0.5s infinite;
+            box-shadow: 0 0 20px rgba(0, 220, 80, 0.2);
+        }
+
+        .ring-3 {
+            width: 250px;
+            height: 250px;
+            border-width: 18px;
+            border-color: rgba(0, 200, 60, 0.3);
+            animation: pulse-wave 2s 1s infinite;
+            box-shadow: 0 0 20px rgba(0, 200, 60, 0.1);
+        }
+
+        @keyframes pulse-wave {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+        }
+        
+
+        .math-equation {
+        max-width: 700px;
+        margin-bottom: 20px;
+    }
+
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        #close-rules-btn{
+            padding-top: -40px;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">
+            ROCK<br>PAPER<br>SCISSORS
+        </div>
+        <div class="score-container">
+            <div class="score-box">
+                <div class="score-label">computer score </div>
+                <div class="score" id="player-score">0</div>
+            </div>
+            <div class="score-box">
+                <div class="score-label">your score</div>
+                <div class="score" id="computer-score">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <div class="options" id="options">
+            <svg class="triangle" viewBox="0 0 280 280">
+                <!-- Black triangle in the middle -->
+                <polygon points="70,100,210,100 140,220" fill="None" stroke="black" stroke-width="2"/>
+                
+                <!-- Connection lines forming a triangle outline -->
+                <line x1="70" y1="100" x2="210" y2="100" stroke="black" stroke-width="4" />
+                <line x1="70" y1="100" x2="140" y2="220" stroke="black" stroke-width="4" />
+                <line x1="210" y1="100" x2="140" y2="220" stroke="black" stroke-width="4" />
+            </svg>
+           
+            <div class="option rock" data-choice="rock">
+                <span class="option-icon">✊</span>
+            </div>
+            <div class="option paper" data-choice="paper">
+                <span class="option-icon">✋</span>
+            </div>
+            <div class="option scissors" data-choice="scissors">
+                <span class="option-icon">✌️</span>
+            </div>
+        </div>
+
+        <div class="result-container" id="result-container">
+            <div class="player-pick">
+                <div class="pick-label">YOU PICKED</div>
+                <div class="pick-circle" id="player-pick-circle">
+                    <span class="option-icon" id="player-pick-icon"></span>
+                </div>
+            </div>
+            <div class="result">
+                <div class="result-message" id="result-message"></div>
+                <button class="next-btn" id="next-btn" style="display: none;">NEXT</button>
+                <button class="play-again-btn" id="play-again-btn">PLAY AGAIN</button>
+            </div>
+            <div class="computer-pick">
+                <div class="pick-label">COMPUTER PICKED</div>
+                <div class="pick-circle" id="computer-pick-circle">
+                    <span class="option-icon" id="computer-pick-icon"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="celebration-container" id="celebration-container">
+            <img src="trophy image.png" alt="Math equation" class="math-equation">
+            <div class="trophy"></div>
+            <div class="celebration-message">HURRAY!!<br>YOU WON THE GAME</div>
+            <button class="play-again-btn" id="celebration-play-again-btn">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <button class="rules-btn" id="rules-btn">RULES</button>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="rules-container" id="rules-container">
+        <div class="rules-header">
+            <div class="rules-title">Game Rules</div>
+            <button class="close-btn" id="close-rules-btn">X</button>
+        </div>
+        <div class="rules-content">
+            <ul>
+                <li>Rock beats scissors, scissors beat paper, and paper beats rock</li>
+                <li>Agree ahead of time whether you'll count off “rock, paper, scissors, shoot” or just “rock, paper, scissors</li>
+                <li>Use rock, paper, scissors to settle minor decisions or simply play to pass the time</li>
+                <li>If both players lay down the same hand, each player lays down another hand</li>
+                
+            </ul>
+        </div>
+    </div>
+
+    <script>
+      
+        const playerScoreElem = document.getElementById('player-score');
+        const computerScoreElem = document.getElementById('computer-score');
+        const optionsContainer = document.getElementById('options');
+        const resultContainer = document.getElementById('result-container');
+        const playerPickCircle = document.getElementById('player-pick-circle');
+        const computerPickCircle = document.getElementById('computer-pick-circle');
+        const playerPickIcon = document.getElementById('player-pick-icon');
+        const computerPickIcon = document.getElementById('computer-pick-icon');
+        const resultMessage = document.getElementById('result-message');
+        const nextBtn = document.getElementById('next-btn');
+        const playAgainBtn = document.getElementById('play-again-btn');
+        const celebrationPlayAgainBtn = document.getElementById('celebration-play-again-btn');
+        const rulesBtn = document.getElementById('rules-btn');
+        const rulesContainer = document.getElementById('rules-container');
+        const closeRulesBtn = document.getElementById('close-rules-btn');
+        const celebrationContainer = document.getElementById('celebration-container');
+        const overlay = document.getElementById('overlay');
+
+
+        let playerScore = 0;
+        let computerScore = 0;
+
+       
+        function loadScores() {
+            const savedPlayerScore = localStorage.getItem('playerScore');
+            const savedComputerScore = localStorage.getItem('computerScore');
+            
+            if (savedPlayerScore !== null) {
+                playerScore = parseInt(savedPlayerScore);
+                playerScoreElem.textContent = playerScore;
+            }
+            
+            if (savedComputerScore !== null) {
+                computerScore = parseInt(savedComputerScore);
+                computerScoreElem.textContent = computerScore;
+            }
+        }
+
+     
+        function saveScores() {
+            localStorage.setItem('playerScore', playerScore);
+            localStorage.setItem('computerScore', computerScore);
+        }
+
+      
+        function getComputerChoice() {
+            const choices = ['rock', 'paper', 'scissors'];
+            const randomIndex = Math.floor(Math.random() * 3);
+            return choices[randomIndex];
+        }
+
+      
+        function determineWinner(playerChoice, computerChoice) {
+            if (playerChoice === computerChoice) {
+                return 'tie';
+            } else if (
+                (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                (playerChoice === 'paper' && computerChoice === 'rock') ||
+                (playerChoice === 'scissors' && computerChoice === 'paper')
+            ) {
+                return 'player';
+            } else {
+                return 'computer';
+            }
+        }
+
+       
+        function getChoiceIcon(choice) {
+            if (choice === 'rock') return '✊';
+            if (choice === 'paper') return '✋';
+            if (choice === 'scissors') return '✌️';
+        }
+
+      
+        function updateUI(playerChoice, computerChoice, winner) {
+            
+            optionsContainer.style.display = 'none';
+            resultContainer.style.display = 'flex';
+            
+     
+            playerPickIcon.textContent = getChoiceIcon(playerChoice);
+            playerPickCircle.className = 'pick-circle ' + playerChoice;
+            
+            
+            computerPickIcon.textContent = getChoiceIcon(computerChoice);
+            computerPickCircle.className = 'pick-circle ' + computerChoice;
+            
+   
+            removeRings();
+            
+            
+            if (winner === 'player') {
+                resultMessage.textContent = 'YOU WIN';
+                const againstPCMessage = document.createElement('span');
+                againstPCMessage.textContent = 'AGAINST PC';
+                againstPCMessage.style.fontSize = '20px';
+                resultMessage.appendChild(document.createElement('br'));
+                resultMessage.appendChild(againstPCMessage);
+                playerScore++;
+                playerScoreElem.textContent = playerScore;
+                addRingsToWinner(playerPickCircle);
+                nextBtn.style.display = 'block';
+                playAgainBtn.style.display = 'block';
+            } else if (winner === 'computer') {
+                resultMessage.textContent = 'YOU LOST';
+                const againstPCMessage = document.createElement('span');
+                againstPCMessage.textContent = 'AGAINST PC';
+                againstPCMessage.style.fontSize = '20px';
+                resultMessage.appendChild(document.createElement('br'));
+                resultMessage.appendChild(againstPCMessage);
+                computerScore++;
+                computerScoreElem.textContent = computerScore;
+                addRingsToWinner(computerPickCircle);
+                nextBtn.style.display = 'none';
+                playAgainBtn.style.display = 'block';
+            } else {
+                resultMessage.textContent = 'TIE UP';
+                nextBtn.style.display = 'none';
+                playAgainBtn.style.display = 'block';
+            }
+
+            
+        
+            saveScores();
+        }
+
+        
+        function addRingsToWinner(element) {
+            for (let i = 1; i <= 3; i++) {
+                const ring = document.createElement('div');
+                ring.className = `ring ring-${i}`;
+                element.appendChild(ring);
+            }
+        }
+
+     
+        function removeRings() {
+            const rings = document.querySelectorAll('.ring');
+            rings.forEach(ring => ring.remove());
+        }
+
+       
+        function resetGame() {
+            optionsContainer.style.display = 'flex';
+            resultContainer.style.display = 'none';
+            celebrationContainer.style.display = 'none';
+            removeRings();
+        }
+
+  
+        function showRules() {
+            rulesContainer.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+  
+        function hideRules() {
+            rulesContainer.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', () => {
+                const playerChoice = option.getAttribute('data-choice');
+                const computerChoice = getComputerChoice();
+                const winner = determineWinner(playerChoice, computerChoice);
+                
+                updateUI(playerChoice, computerChoice, winner);
+            });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            resultContainer.style.display = 'none';
+            celebrationContainer.style.display = 'flex';
+        });
+
+        playAgainBtn.addEventListener('click', resetGame);
+        celebrationPlayAgainBtn.addEventListener('click', resetGame);
+
+        rulesBtn.addEventListener('click', showRules);
+        closeRulesBtn.addEventListener('click', hideRules);
+        overlay.addEventListener('click', hideRules);
+
+      
+        loadScores();
+    </script>
+</body>
+</html>
